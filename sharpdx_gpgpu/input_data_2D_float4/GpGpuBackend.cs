@@ -16,7 +16,7 @@ using Color = SharpDX.Color;
 using Device = SharpDX.Direct3D11.Device;
 using MapFlags = SharpDX.Direct3D11.MapFlags;
 
-namespace input_data_2D
+namespace input_data_2D_float4
 {
     public class GpGpuApp
     {
@@ -86,7 +86,7 @@ namespace input_data_2D
                     ArraySize = 1,
                     BindFlags = BindFlags.None,
                     CpuAccessFlags = CpuAccessFlags.Read,
-                    Format = Format.R32_Float,
+                    Format = Format.R32G32_Float,
                     Width = size.Width,
                     Height = size.Height,
                     MipLevels = 1,
@@ -106,8 +106,9 @@ namespace input_data_2D
             unsafe
             {
                 var buffer = (float*)result.DataPointer;
+                int total_data_count = size.Width * size.Height * 2 /*each two float on data stream corresponds to one elem on tex*/;
                 Console.WriteLine("Output Data:");
-                for (int i = 0; i < /*size.Width * size.Height*/ 10 /*only the first 10 objs*/;)
+                for (int i = 0; i < total_data_count /*10*/ /*only the first 10 objs*/;)
                 {
                     Console.WriteLine("({0}, {1,2})", buffer[i], buffer[i + 1]);
                     i += 2;
@@ -126,7 +127,7 @@ namespace input_data_2D
                 ArraySize = 1,
                 BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
                 CpuAccessFlags = CpuAccessFlags.None,
-                Format = Format.R32_Float,
+                Format = Format.R32G32_Float,   // PS return type: x, y
                 Width = size.Width,
                 Height = size.Height,
                 MipLevels = 1,
@@ -138,7 +139,7 @@ namespace input_data_2D
             // Create render target view
             render_target_view = new RenderTargetView(dev, render_target, new RenderTargetViewDescription()
             {
-                Format = Format.R32_Float,
+                Format = Format.R32G32_Float,   // PS return type: x, y
                 Dimension = RenderTargetViewDimension.Texture2D,
                 Texture2D = { MipSlice = 0 }
             });
@@ -165,4 +166,3 @@ namespace input_data_2D
         }
     }
 }
-
